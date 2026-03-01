@@ -1,7 +1,11 @@
+import { configDotenv } from "dotenv";
+
+configDotenv();
+
 const imagekit = new ImageKit({
-  publicKey: "***",
-  privateKey: "***",
-  urlEndpoint: "***",
+  publicKey: process.env.IMAGEKIT_publicKey,
+  privateKey: process.env.IMAGEKIT_privateKey,
+  urlEndpoint: process.env.PORT,
 });
 
 export const imageUpload = async (file) => {
