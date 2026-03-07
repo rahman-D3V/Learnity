@@ -12,7 +12,7 @@ const OTPSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
     expires: 5 * 60,
   },
 });
@@ -29,10 +29,11 @@ const OTPSchema = new mongoose.Schema({
 OTPSchema.pre("save", async function (next) {
   try {
     await sendOTPMail(this.email, this.OTP);
-    console.log("Email send successfully");
+    console.log("Email sent successfully");
     next();
   } catch (error) {
-    console.log("Error while sending mail", error.message);
+    console.log("Error while sending mail:", error.message);
+    next(error);
   }
 });
 

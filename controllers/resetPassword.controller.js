@@ -41,6 +41,7 @@ const resetPasswordToken = async (req, res) => {
       message: "Reset password email sent successfully",
     });
   } catch (error) {
+    console.log("Erorr while password reset ", error.message);
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -61,7 +62,7 @@ const resetPassword = async (req, res) => {
   if (password !== confirmPassword) {
     return res.status(400).json({
       success: false,
-      message: "Passwords do not match",
+      message: "Password and Confirm Password Does not Match",
     });
   }
 
@@ -97,6 +98,7 @@ const resetPassword = async (req, res) => {
       message: "Password reset successful",
     });
   } catch (error) {
+    console.log("Erorr while password reset ", error.message);
     return res.status(500).json({
       success: false,
       message: "Server error",

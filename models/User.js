@@ -1,56 +1,59 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  accountType: {
-    type: String,
-    enum: ["Admin", "Student", "Instructor"],
-  },
-  additionalDetails: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Profile",
-    required: true,
-  },
-  courses: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
+const userSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: true,
+      trim: true,
     },
-  ],
-  image: {
-    type: String,
-    required: true,
-  },
-  resetPasswordToken: {
-    type: string,
-  },
-  resetPasswordExpiresIn: {
-    type: Date,
-  },
-  courseProgress: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "CourseProgess",
+    lastName: {
+      type: String,
+      required: true,
+      trim: true,
     },
-  ],
-});
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    accountType: {
+      type: String,
+      enum: ["Admin", "Student", "Instructor"],
+    },
+    additionalDetails: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile",
+      required: true,
+    },
+    courses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
+    image: {
+      type: String,
+      required: true,
+    },
+    resetPasswordToken: {
+      type: string,
+    },
+    resetPasswordExpiresIn: {
+      type: Date,
+    },
+    courseProgress: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CourseProgess",
+      },
+    ],
+  },
+  { timestamps: true },
+);
 
 export const User = mongoose.model("User", userSchema);

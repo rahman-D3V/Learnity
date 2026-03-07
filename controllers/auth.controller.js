@@ -47,7 +47,7 @@ const sendOTP = async (req, res) => {
       message: "OTP sent successfully",
     });
   } catch (error) {
-    console.log(error.message);
+    console.log("Error while sending OTP ", error.message);
     return res.status(500).json({
       success: false,
       message: "Failed to send OTP",
@@ -145,6 +145,7 @@ const signUP = async (req, res) => {
       },
     });
   } catch (error) {
+    console.log("Error while Sign up ", error.message);
     return res.status(500).json({
       success: false,
       message: "something went wrong. Please try again",
@@ -204,6 +205,7 @@ const login = async (req, res) => {
         message: "Login Successful",
       });
   } catch (error) {
+    console.log("Error while Login ", error.message);
     return res.status(500).json({
       success: false,
       message: "Server Error. Try again",
@@ -222,7 +224,7 @@ const changePassword = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({

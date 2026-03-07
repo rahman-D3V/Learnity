@@ -12,6 +12,12 @@ const courseProgressSchema = new mongoose.Schema({
       ref: "SubSection",
     },
   ],
+  
+
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 export const CourseProgress = mongoose.model(

@@ -32,15 +32,20 @@ const courseSchema = new mongoose.Schema(
         ref: "Section",
       },
     ],
-    ratingAndReview: [
+    ratingAndReviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "RatingAndReview",
       },
     ],
-    tag: {
+    category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Tag",
+      ref: "Category",
+    },
+    tags: {
+      type: [String],
+      // required: true,
+      // validate: [(val) => val.length > 0, "At least one tag is required"],
     },
     studentsEnrolled: [
       {
@@ -48,6 +53,18 @@ const courseSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+
+
+
+    
+    instructions: {
+      type: [String],
+    },
+    status: {
+      type: String,
+      enum: ["Draft", "Published"],
+    },
+
     //   language: {
     //     type: String,
     //     required: true,

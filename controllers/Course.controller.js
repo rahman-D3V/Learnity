@@ -1,11 +1,11 @@
-import { Course } from "../models/Course";
-import { Tag } from "../models/Tag.js";
+import { Category } from "../models/Category.js";
+import { Course } from "../models/Course.js";
 import { User } from "../models/User.js";
 import { imageUpload } from "../utils/imageUploader.js";
 
 const createCourse = async (req, res) => {
   try {
-    const { courseName, courseDescription, price, whatYouWillLearn, tag } =
+    const { courseName, courseDescription, price, whatYouWillLearn, category } =
       req.body;
 
     if (
@@ -13,7 +13,7 @@ const createCourse = async (req, res) => {
       !courseDescription?.trim() ||
       !price ||
       !whatYouWillLearn?.trim() ||
-      !tag
+      !category
     ) {
       return res.status(400).json({
         success: false,
@@ -42,14 +42,14 @@ const createCourse = async (req, res) => {
       });
     }
 
-    // Validate tag ID (extra safety for Postman/manual requests).
+    // Validate category ID (extra safety for Postman/manual requests).
 
-    const tagDetails = await Tag.findById(tag);
+    const categoryDetails = await Category.findById(category);
 
-    if (!tagDetails) {
+    if (!categoryDetails) {
       return res.status(404).json({
         success: false,
-        message: "Invalid tag provided.",
+        message: "Invalid category provided.",
       });
     }
 
@@ -62,7 +62,7 @@ const createCourse = async (req, res) => {
       price,
       instructor: instructorDetails._id,
       whatYouWillLearn: whatYouWillLearn.trim(),
-      tag,
+      category: categoryDetails._id,
       thumbnail: uploadThumbnail,
     });
 
@@ -73,8 +73,8 @@ const createCourse = async (req, res) => {
       { new: true },
     );
 
-    // Add the new course ID to the tag's courses array
-    await Tag.findByIdAndUpdate(tag, {
+    // Add the new course ID to the category's schema courses array
+    await Category.findByIdAndUpdate(category, {
       $push: { courses: newCourse._id },
     });
 
@@ -126,4 +126,55 @@ const getAllCourses = async (req, res) => {
   }
 };
 
-export { createCourse, getAllCourses };
+const getCourseDetails = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+
+    if (!courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "Course ID is required.",
+      });
+    }
+
+    const courseDetails = await Course.findById(courseId)
+      .populate({
+        path: "instructor",
+        populate: {
+          path: "additionalDetails",
+        },
+      })
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      })
+      .populate("category")
+      .populate("ratingAndReviews")
+      .exec();
+
+    if (!courseDetails) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Course details retrieved successfully.",
+      data: courseDetails,
+    });
+  } catch (error) {
+    console.error("Error while fetching course details:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong while fetching course details.",
+      error: error.message,
+    });
+  }
+};
+
+export { createCourse, getAllCourses, getCourseDetails };
