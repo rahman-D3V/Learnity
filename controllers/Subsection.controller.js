@@ -22,7 +22,7 @@ const createSubsection = async (req, res) => {
       description,
       title,
       timeDuration,
-      uploadedVideo,
+      videoUrl: uploadedVideo,
     });
 
     await Section.findByIdAndUpdate(sectionId, {
@@ -58,9 +58,11 @@ const updateSubsection = async (req, res) => {
 
     const updatedSubSectionDetails = {};
 
-    if (title) updateSubsection.title = title;
-    if (description) updateSubsection.description = description;
-    if (timeDuration) updateSubsection.timeDuration = timeDuration;
+    if (title) updatedSubSectionDetails.title = title;
+    if (description) updatedSubSectionDetails.description = description;
+    if (timeDuration) updatedSubSectionDetails.timeDuration = timeDuration;
+
+    console.log(updatedSubSectionDetails);
 
     if (Object.keys(updatedSubSectionDetails).length === 0) {
       return res.status(400).json({
@@ -102,6 +104,7 @@ const deleteSubsection = async (req, res) => {
     }
 
     const subSection = await SubSection.findById(subSectionId);
+    
     if (!subSection) {
       return res.status(404).json({
         success: false,

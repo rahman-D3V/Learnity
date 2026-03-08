@@ -45,6 +45,7 @@ const sendOTP = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "OTP sent successfully",
+      otp
     });
   } catch (error) {
     console.log("Error while sending OTP ", error.message);
@@ -55,7 +56,7 @@ const sendOTP = async (req, res) => {
   }
 };
 
-const signUP = async (req, res) => {
+const signup = async (req, res) => {
   const {
     firstName,
     lastName,
@@ -149,6 +150,7 @@ const signUP = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "something went wrong. Please try again",
+      error: error.message,
     });
   }
 };
@@ -261,5 +263,7 @@ const changePassword = async (req, res) => {
     });
   }
 };
+
+export { login, sendOTP, signup, changePassword };
 
 // https://api.dicebear.com/5.x/initials/svg?seed=${Asus}%20${Vivobook}

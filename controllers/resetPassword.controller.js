@@ -39,6 +39,10 @@ const resetPasswordToken = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Reset password email sent successfully",
+      data: {
+        token,
+        url,
+      },
     });
   } catch (error) {
     console.log("Erorr while password reset ", error.message);
@@ -105,3 +109,5 @@ const resetPassword = async (req, res) => {
     });
   }
 };
+
+export { resetPassword, resetPasswordToken };

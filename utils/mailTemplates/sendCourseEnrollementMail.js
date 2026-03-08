@@ -1,4 +1,5 @@
-import { transporter } from "../config/nodeMailer.js";
+import { transporter } from "../../config/nodeMailer.config.js";
+
 
 export const sendCourseEnrollmentMail = async (email, userName, courseName) => {
   try {

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { sendOTPMail } from "../utils/sendOTPMail.js";
+import { sendOTPMail } from "../utils/mailTemplates/sendOTPMail.js";
 
 const OTPSchema = new mongoose.Schema({
   email: {
@@ -30,10 +30,9 @@ OTPSchema.pre("save", async function (next) {
   try {
     await sendOTPMail(this.email, this.OTP);
     console.log("Email sent successfully");
-    next();
   } catch (error) {
     console.log("Error while sending mail:", error.message);
-    next(error);
+    throw error;
   }
 });
 

@@ -1,5 +1,6 @@
 import { Course } from "../models/Course.js";
 import { Section } from "../models/Section.js";
+import { SubSection } from "../models/SubSection.js";
 
 const createSection = async (req, res) => {
   try {
@@ -83,7 +84,7 @@ const updateSection = async (req, res) => {
 
 const deleteSection = async (req, res) => {
   try {
-    const { sectionId } = req.params;
+    const { sectionId } = req.body;
 
     if (!sectionId) {
       return res.status(400).json({
@@ -92,7 +93,25 @@ const deleteSection = async (req, res) => {
       });
     }
 
-    // TODO: Do we need to delete section from courseSchema?
+    const section = await Section.findById(sectionId).lean();
+
+    if (!section) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found",
+      });
+    }
+
+    // remove section from course
+    await Course.findOneAndUpdate(
+      { courseContent: sectionId },
+      { $pull: { courseContent: sectionId } },
+    );
+
+    // delete all subsections of this section
+    await SubSection.deleteMany({
+      _id: { $in: section.subSection },
+    });
 
     await Section.findByIdAndDelete(sectionId);
 

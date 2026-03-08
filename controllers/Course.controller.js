@@ -5,15 +5,22 @@ import { imageUpload } from "../utils/imageUploader.js";
 
 const createCourse = async (req, res) => {
   try {
-    const { courseName, courseDescription, price, whatYouWillLearn, category } =
-      req.body;
+    const {
+      courseName,
+      courseDescription,
+      price,
+      whatYouWillLearn,
+      category,
+      tags,
+    } = req.body;
 
     if (
       !courseName?.trim() ||
       !courseDescription?.trim() ||
       !price ||
       !whatYouWillLearn?.trim() ||
-      !category
+      !category ||
+      !tags
     ) {
       return res.status(400).json({
         success: false,
@@ -56,6 +63,8 @@ const createCourse = async (req, res) => {
     // Upload course thumbnail to ImageKit
     const uploadThumbnail = await imageUpload(req.file);
 
+    const tagsArray = tags.split(",").map(tag => tag.trim());
+
     const newCourse = await Course.create({
       courseName: courseName.trim(),
       courseDescription: courseDescription.trim(),
@@ -64,6 +73,7 @@ const createCourse = async (req, res) => {
       whatYouWillLearn: whatYouWillLearn.trim(),
       category: categoryDetails._id,
       thumbnail: uploadThumbnail,
+      tags: tagsArray,
     });
 
     // Add the newly created course ID to the instructor's courses array

@@ -1,5 +1,6 @@
-import { Profile } from "../models/Profile";
+import { Profile } from "../models/Profile.js";
 import { User } from "../models/User.js";
+import { imageUpload } from "../utils/imageUploader.js";
 
 const updateProfile = async (req, res) => {
   try {
@@ -58,26 +59,127 @@ const updateProfile = async (req, res) => {
 };
 
 const deleteAccount = async (req, res) => {
-  const { id } = req.user;
+  try {
+    const userId = req.user.id;
 
-  const user = await User.findById(id);
+    if (req.user.accountType !== "Student") {
+      return res.status(403).json({
+        success: false,
+        message:
+          "You are not authorized to delete this account. Only students can perform this action.",
+      });
+    }
 
-  if (!user) {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // delete profile details
+    const profileId = user.additionalDetails;
+    await Profile.findByIdAndDelete(profileId);
+
+    // delete user
+    await User.findByIdAndDelete(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "User account deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete account error:", error);
+
     return res.status(500).json({
       success: false,
-      message: "user not found",
+      message: "Failed to delete user account",
+      error: error.message,
     });
   }
-
-  const profileId = user.additionalDetails;
-
-  await Profile.findByIdAndDelete(profileId);
-
-  await User.findByIdAndDelete(id);
-
-  return res.statsus(201).json({
-    msg: "User deletd scueesfullt",
-  });
 };
 
-export { updateProfile, deleteAccount };
+const updateProfilePicture = async (req, res) => {
+  // get image from req.file
+  // profile pic upload
+  // update link in userimage user schmea
+  try {
+    if (!req.file) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+
+    const imageUrl = await imageUpload(req.file);
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        image: imageUrl,
+      },
+      { new: true },
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "user not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile update successfully",
+      data: user.image,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Profile update failed",
+      error: error.message,
+    });
+  }
+};
+
+const getUserDetails = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is missing in the request.",
+      });
+    }
+
+    const user = await User.findById(userId)
+      .populate("additionalDetails")
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User details fetched successfully.",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch user details.",
+      error: error.message,
+    });
+  }
+};
+
+export { updateProfile, deleteAccount, updateProfilePicture, getUserDetails };

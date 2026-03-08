@@ -29,7 +29,7 @@ export const isStudent = (req, res, next) => {
   if (req.user.accountType !== "Student") {
     return res.status(403).json({
       success: false,
-      message: "Access denied. Login as Student",
+      message: "Access denied. Please Login as Student",
     });
   }
   next();
@@ -39,7 +39,7 @@ export const isInstructor = (req, res, next) => {
   if (req.user.accountType !== "Instructor") {
     return res.status(403).json({
       success: false,
-      message: "Access denied. Login as instrcutor",
+      message: "Access denied. Please Login as instrcutor",
     });
   }
   next();
@@ -49,7 +49,7 @@ export const isAdmin = (req, res, next) => {
   if (req.user.accountType !== "Admin") {
     return res.status(403).json({
       success: false,
-      message: "Access denied. Login as Admin",
+      message: "Access denied. Please Login as Admin",
     });
   }
   next();
